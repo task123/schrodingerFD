@@ -23,9 +23,11 @@ For mac (and probably linux) users one can simply run runSimAndAnimate.sh and ty
 with the values to simulate, to both run the simulation, animate it and open the movie with quicktime player.
 The runSimAndAnimate.sh must first be given permission by running '$ chmod +x runSimAndAnimate.sh'.
 Example call: ./runSimAndAnimate.sh free1D.txt
+
 Likewise contSimAndAnimation.sh run a continuation of a previous simulation, animate it open the movie with
 quicktime player. contSimAndAnimation takes three input parameters; the name of the file with the values we 
 simulate, number of interations and if output should be appendend to previous files as input.
+The runSimAndAnimate.sh must first be given permission by running '$ chmod +x runSimAndAnimate.sh'.
 Example call: ./contSimAndAnimate.sh free1D.txt 1000 1
 
 One can make new initial states and potentials in the 'Schrodinger.cpp' file found in 'sourceFilesSchrodingerFD'
