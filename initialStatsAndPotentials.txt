@@ -1,0 +1,80 @@
+// This file lists all the initial states and potentials available for schrodingerFD to
+// simulate and the extra parameters these need.
+// The initial states and potential are sorted after number of dimensions.
+// For a detailed understanding of the initial states and potentials have a look in the
+// source code of schrodingerFD in Schrodinger.cpp under makeInitState() and setV().
+// Necessary extra parameters are listed with a '-' under the initial state or potential.
+// # is used to make a comment about the parameter or name of initial state or potential.
+
+1D:
+  INITIAL STATES:
+    sinusiodalGaussian  # Gaussian curve modified with a cosine for the real part and 
+			# sine for the imaginary part.
+	- Lx1OverSDx1   # Length in x1-direction divided by the standard deviation in the 
+		 	# x1-directon used to define the gaussian curve
+			# The standard deviation is assigned implicit to make it 				# independent of the length in x1-direction
+	- p # Momentum of the simulated particle (k = p / hbar)
+	    # 20 * pi * hbar is probably a sensible value
+
+  POTENTIALS:
+    free # the potential is 0 everywhere
+	
+    constBarrier # potential of constant value, V0, from the midle of the length in 
+		 # x1-directon and to a given thickness, VThickness
+	- V0 # the value of the potential
+	- VThickness # the depth of the potential
+    
+    triangle # potential the shape of a triangle
+	- V0 # the value of the potential
+	- VThickness # the length of the ground line of the triangle
+	- VDistanceToMax # distance from the stat of the potential to its maximum
+			 # must be a value between 0 and VThickness
+2D:
+  INITIAL STATES:
+    sinusiodalGaussian  # A gaussian curve in x2-direction time gaussian curve in the 
+			# x1-directon modified with a cosine for the real part and 
+			# sine for the imaginary part in the .
+	- Lx1OverSDx1   # Length in x1-direction divided by the standard deviation in the 
+		 	# x1-directon used to define the gaussian curve
+			# The standard deviation is assigned implicit to make it 				# independent of the length in x1-direction
+	- Lx2OverSDx2   # Length in x2-direction divided by the standard deviation in the 
+		 	# x2-directon used to define the gaussian curve
+			# The standard deviation is assigned implicit to make it 				# independent of the length in x1-direction
+	- p # Momentum of the simulated particle (k = p / hbar)
+	    # 20 * pi * hbar is probably a sensible value
+
+  POTENTIALS:
+    free # the potential is 0 everywhere
+
+    constBarrier # potential of constant value, V0, from the midle of the length in 
+		 # x1-directon and to a given thickness, VThickness
+	- V0 # the value of the potential
+	- VThickness # the depth of the potential
+
+   multiSlit  # potential of constant value from the midle of the length in 
+	      # x1-directon and to a given thickness with a given number of slits of
+	      # specified width and separated of a given distance
+	- V0 # the value of the potential
+	- VThickness # the depth of the potential
+	- slitNumber # number of slits
+	- slitWidth # width of a slit
+	- slitDistance # distance between the slits
+
+    circle # potential of constant value within a radius of a spesified point
+	- V0 # the value of the potential
+	- radius # radius of the potential
+	- centerX1 # length in x1-direction to the center of the circle
+	- centerX2 # length in x2-direction to the center of the circle
+
+    ball # potential as the top half of a ball
+	- V0 # the value of the potential
+	- radius # radius of the potential
+	- centerX1 # length in x1-direction to the center of the circle
+	- centerX2 # length in x2-direction to the center of the circle
+
+3D:
+  INITIAL STATES:
+
+  POTENTIALS:
+
+
