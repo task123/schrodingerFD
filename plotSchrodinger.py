@@ -6,6 +6,7 @@
 # comment out anim.save... and uncomment plt.show() close to the bottom of the file
 # If one does not use a mac one might want to comment out matplotlib.use('TKAgg')
 
+print "plotSchrodinger.py is running"
 print "Type the name of the situation file:"
 filename = raw_input()
 print "You typed: ",

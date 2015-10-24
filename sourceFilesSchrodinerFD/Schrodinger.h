@@ -39,6 +39,7 @@ public:
     ~Schrodinger();
 private:
 // MEMBER FUNCTIONS
+    void storeFilename(string filename);
     void loadAndCalculateVariables();
         string getValue(ifstream &situationFile);
 

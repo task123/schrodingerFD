@@ -14,6 +14,7 @@ using namespace std;
 
 //PUBLIC MEMBER FUNCTIONS
 void Schrodinger::run(){
+    cout << "schrodingerFD is running" << endl;
     cout << "Type in the name of the situation file:" << endl;
     string typedFilename;
     cin >> typedFilename;
@@ -22,18 +23,10 @@ void Schrodinger::run(){
 }
 
 void Schrodinger::run(string filename){
-    clock_t t = clock() / CLOCKS_PER_SEC;
-    filename = filename.substr(0, filename.size()-4);
-    this->filename = filename;
+    clock_t startTime = clock() / CLOCKS_PER_SEC;
     
-    ifstream sitFile(filename + ".txt");
-    while (!sitFile.is_open()) {
-        cout << "Could not open the file: " << filename << endl;
-        cout << "Type in the name of the situation file:" << endl;
-        cin >> filename;
-        sitFile.open(filename);
-        filename = filename.substr(0, filename.size()-4);
-    }
+    storeFilename(filename);
+    ifstream sitFile(this->filename + ".txt");
     situationFile = &sitFile;
     loadAndCalculateVariables();
     
@@ -58,15 +51,18 @@ void Schrodinger::run(string filename){
     cout << "The start energy is: " << startEnergy << " and the highest potential is: " << Vmax << endl;
     cout << "The final energy is " << finalEnergy/startEnergy << " times the start energy." << endl;
     cout << "The final probability of finding the particle is: " << finalProb << endl;
-    long time = static_cast<long>(clock() - t) / CLOCKS_PER_SEC;
+    long time = static_cast<long>(clock() - startTime) / CLOCKS_PER_SEC;
     cout << "The simulation used " << time / 60 << " minuttes and " << time % 60 << " seconds." << endl;
     
     storeFinalState(time);
 }
 
 void Schrodinger::continueSimulation(string filename, int numOfIterations, bool appendOldFile){
-    clock_t t = clock() / CLOCKS_PER_SEC;
-    this->filename = filename;
+    clock_t startTime = clock() / CLOCKS_PER_SEC;
+    
+    storeFilename(filename);
+    ifstream sitFile(this->filename + ".txt");
+    situationFile = &sitFile;
     loadAndCalculateVariables();
     loadFinalState();
     Ni = numOfIterations;
@@ -84,10 +80,13 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     checkForDirectory(!appendOldFile);
 
     finiteDifference(!appendOldFile);
+    
+    finalEnergy = findEnergy();
+    finalProb = findProbability();
     cout << "The start energy is: " << startEnergy << " and the highest potential is: " << Vmax << endl;
     cout << "The final energy is " << finalEnergy/startEnergy << " times the start energy." << endl;
     cout << "The final probability of finding the particle is: " << finalProb << endl;
-    long time = static_cast<long>(clock() - t) / CLOCKS_PER_SEC;
+    long time = static_cast<long>(clock() - startTime) / CLOCKS_PER_SEC;
     cout << "The simulation used " << time / 60 << " minuttes and " << time % 60 << " seconds." << endl;
     
     storeFinalState(time);
@@ -112,6 +111,32 @@ Schrodinger::~Schrodinger(){
 }
 
 //PRIVATE MEMBER FUNCTIONS
+void Schrodinger::storeFilename(string filename){
+    filename = filename.substr(0, filename.size()-4);
+    
+    ifstream sitFile("situations/" + filename + ".txt");
+    if (!sitFile.is_open()) {
+        sitFile.open(filename + ".txt");
+    } else {
+        filename = "situations/" + filename;
+    }
+    while (!sitFile.is_open()) {
+        cout << "Could not open the file: " << filename << endl;
+        cout << "Type in the name of the situation file:" << endl;
+        cin >> filename;
+        sitFile.open("situations/" + filename + ".txt");
+        if (!sitFile.is_open()) {
+            sitFile.open(filename + ".txt");
+        } else {
+            filename = "situations/" + filename;
+        }
+        filename = filename.substr(0, filename.size()-4);
+    }
+    sitFile.close();
+    
+    this->filename = filename;
+}
+
 void Schrodinger::loadAndCalculateVariables(){
     // load variables
     numOfDim = stoi(getValue(*situationFile));
@@ -317,14 +342,14 @@ void Schrodinger::setV1D(){
     } else if (potential == "triangle"){
         double V0 = stod(getValue(*situationFile));
         double VThickness = stod(getValue(*situationFile));
-        double VdistanceToMax = stod(getValue(*situationFile)); // must be between 0 and VThickness
+        double VDistanceToMax = stod(getValue(*situationFile)); // must be between 0 and VThickness
         
         setVtoZero();
-        for (int x1 = (Nx1/2); x1 < Nx1/2 + VdistanceToMax/dx1; x1++){
-            V[x1] = V0/(VdistanceToMax/dx1)*(x1-Nx1/2);
+        for (int x1 = (Nx1/2); x1 < Nx1/2 + VDistanceToMax/dx1; x1++){
+            V[x1] = V0/(VDistanceToMax/dx1)*(x1-Nx1/2);
         }
-        for (int x1 = (Nx1/2) + VdistanceToMax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
-            V[x1] = V0 - V0/((VThickness-VdistanceToMax)/dx1)* (x1-Nx1/2 - VdistanceToMax/dx1);
+        for (int x1 = (Nx1/2) + VDistanceToMax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
+            V[x1] = V0 - V0/((VThickness-VDistanceToMax)/dx1)* (x1-Nx1/2 - VDistanceToMax/dx1);
         }
         Vmax = V0;
     }
@@ -491,11 +516,19 @@ void Schrodinger::checkForDirectory(bool newSimulation){
         fileOpenType[0] = 'a';
         fileOpenType[1] = 'b';
     }
-    FILE* plotProbabilityFile = fopen((filename + "/" + filename + "_plot_probability").c_str(), fileOpenType);
-    if (plotProbabilityFile != 0){
-        filename = filename + "/" + filename;
+    if (filename.length() > 11 && filename.substr(0,11) == "situations/") {
+        FILE* plotProbabilityFile = fopen((filename + "/" + filename.substr(10,filename.length()) + "_plot_probability").c_str(), fileOpenType);
+        if (plotProbabilityFile != 0){
+            filename = filename + "/" + filename.substr(11, filename.length());
+        }
+        fclose(plotProbabilityFile);
+    } else {
+        FILE* plotProbabilityFile = fopen((filename + "/" + filename + "_plot_probability").c_str(), fileOpenType);
+        if (plotProbabilityFile != 0){
+            filename = filename + "/" + filename;
+        }
+        fclose(plotProbabilityFile);
     }
-    fclose(plotProbabilityFile);
 }
 
 void Schrodinger::finiteDifference(bool newSimulation){
