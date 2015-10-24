@@ -39,8 +39,13 @@ void Schrodinger::run(string filename){
     psi_i3 = new double [Nx1 * Nx2 * Nx3];
     
     makeInitState();
-    setV();
     startEnergy = findEnergy();
+    setV();
+    
+    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;
+    if (numOfDim ==2){
+        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + Vmax) * 1;
+    }
 
     checkForDirectory(true);
     
@@ -57,6 +62,23 @@ void Schrodinger::run(string filename){
     storeFinalState(time);
 }
 
+void Schrodinger::continueSimulation(){
+    cout << "continueSchrodingerFD is running" << endl;
+    cout << "Type in the name of the situation file:" << endl;
+    string filename;
+    cin >> filename;
+    cout << "You typed in: " << filename << endl;
+    cout << "Type in number of interations:" << endl;
+    int Ni;
+    cin >> Ni;
+    cout << "You typed in: " << Ni << endl;
+    cout << "If you would like to append output to previous files, type '1'. Otherwise type '0':" << endl;
+    int appendOldFile = 0;
+    cin >> appendOldFile;
+    cout << "You typed in: " << appendOldFile << endl;
+    continueSimulation(filename, Ni, appendOldFile);
+}
+
 void Schrodinger::continueSimulation(string filename, int numOfIterations, bool appendOldFile){
     clock_t startTime = clock() / CLOCKS_PER_SEC;
     
@@ -64,7 +86,6 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     ifstream sitFile(this->filename + ".txt");
     situationFile = &sitFile;
     loadAndCalculateVariables();
-    loadFinalState();
     Ni = numOfIterations;
     
     V = new double [Nx1 * Nx2 * Nx3];
@@ -74,12 +95,25 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     psi_i2 = new double [Nx1 * Nx2 * Nx3];
     psi_r3 = new double [Nx1 * Nx2 * Nx3];
     psi_i3 = new double [Nx1 * Nx2 * Nx3];
-
-    setV();
     
     checkForDirectory(!appendOldFile);
 
+    loadFinalState();
+
+    setV();
+    
+    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;
+    if (numOfDim ==2){
+        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + Vmax) * 1;
+    }
+    
     finiteDifference(!appendOldFile);
+    
+    ifstream simulationValues(this->filename + "_simulationValues.txt");
+    string line;
+    getline(simulationValues, line);
+    getline(simulationValues, line);
+    startEnergy = stod(line);
     
     finalEnergy = findEnergy();
     finalProb = findProbability();
@@ -112,11 +146,10 @@ Schrodinger::~Schrodinger(){
 
 //PRIVATE MEMBER FUNCTIONS
 void Schrodinger::storeFilename(string filename){
-    filename = filename.substr(0, filename.size()-4);
     
-    ifstream sitFile("situations/" + filename + ".txt");
+    ifstream sitFile("situations/" + filename);
     if (!sitFile.is_open()) {
-        sitFile.open(filename + ".txt");
+        sitFile.open(filename);
     } else {
         filename = "situations/" + filename;
     }
@@ -124,16 +157,16 @@ void Schrodinger::storeFilename(string filename){
         cout << "Could not open the file: " << filename << endl;
         cout << "Type in the name of the situation file:" << endl;
         cin >> filename;
-        sitFile.open("situations/" + filename + ".txt");
+        sitFile.open("situations/" + filename);
         if (!sitFile.is_open()) {
-            sitFile.open(filename + ".txt");
+            sitFile.open(filename);
         } else {
             filename = "situations/" + filename;
         }
-        filename = filename.substr(0, filename.size()-4);
     }
     sitFile.close();
     
+    filename = filename.substr(0, filename.size()-4);
     this->filename = filename;
 }
 
@@ -204,11 +237,6 @@ void Schrodinger::loadAndCalculateVariables(){
             plotSpacingX2--;
         }
     }
-    
-    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;
-    if (numOfDim ==2){
-        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + Vmax) * 1;
-    }
 }
 
 // gets values from the 'situation' textfile with special format
@@ -250,8 +278,8 @@ void Schrodinger::makeInitState(){
 
 void Schrodinger::makeInitState1D(){
     if (probDistrb == "sinusoidalGaussian") {
-        double Lx1OverSDx1 = stod(getValue(*situationFile));
-        double SDx1 = Lx1/Lx1OverSDx1;
+        double SDx1OverLx1 = stod(getValue(*situationFile));
+        double SDx1 = SDx1OverLx1 * Lx1;
         double p = stod(getValue(*situationFile));
         double k = p / hbar;
         double startX1 = Nx1 / 4;
@@ -267,12 +295,12 @@ void Schrodinger::makeInitState1D(){
 }
 
 void Schrodinger::makeInitState2D(){
-    if (probDistrb == "sinusiodalGaussian") {
-        double Lx1OverSDx1 = stod(getValue(*situationFile));
-        double Lx2OverSDx2 = stod(getValue(*situationFile));
+    if (probDistrb == "sinusoidalGaussian") {
+        double SDx1OverLx1 = stod(getValue(*situationFile));
+        double SDx2OverLx2 = stod(getValue(*situationFile));
         double p = stod(getValue(*situationFile));
-        double SDx1 = Lx1 / Lx1OverSDx1;
-        double SDx2 = Lx2 / Lx2OverSDx2;
+        double SDx1 = SDx1OverLx1 * Lx1;
+        double SDx2 = SDx2OverLx2 * Lx2;
         double k = p / hbar;
         int startX1 = Nx1 / 4;
         int startX2 = Nx2 / 2;
@@ -332,24 +360,31 @@ void Schrodinger::setV1D(){
         setVtoZero();
         Vmax = 0;
     } else if (potential == "constBarrier"){
-        double V0 = stod(getValue(*situationFile));
-        double VThickness = stod(getValue(*situationFile));
+        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double VThicknessOverLx1 = stod(getValue(*situationFile));
+        
+        double V0 = V0OverStartEnergy * startEnergy;
+        double VThickness = VThicknessOverLx1 * Lx1;
         setVtoZero();
         for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
             V[x1] = V0;
         }
         Vmax = V0;
     } else if (potential == "triangle"){
-        double V0 = stod(getValue(*situationFile));
-        double VThickness = stod(getValue(*situationFile));
-        double VDistanceToMax = stod(getValue(*situationFile)); // must be between 0 and VThickness
+        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double VThicknessOverLx1 = stod(getValue(*situationFile));
+        double relativDistanceToVmax = stod(getValue(*situationFile)); // must be between 0 and 1
+        
+        double V0 = V0OverStartEnergy * startEnergy;
+        double VThickness = VThicknessOverLx1 * Lx1;
+        double distanceToVmax = relativDistanceToVmax * VThickness;
         
         setVtoZero();
-        for (int x1 = (Nx1/2); x1 < Nx1/2 + VDistanceToMax/dx1; x1++){
-            V[x1] = V0/(VDistanceToMax/dx1)*(x1-Nx1/2);
+        for (int x1 = (Nx1/2); x1 < Nx1/2 + distanceToVmax/dx1; x1++){
+            V[x1] = V0/(distanceToVmax/dx1)*(x1-Nx1/2);
         }
-        for (int x1 = (Nx1/2) + VDistanceToMax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
-            V[x1] = V0 - V0/((VThickness-VDistanceToMax)/dx1)* (x1-Nx1/2 - VDistanceToMax/dx1);
+        for (int x1 = (Nx1/2) + distanceToVmax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
+            V[x1] = V0 - V0/((VThickness-distanceToVmax)/dx1)* (x1-Nx1/2 - distanceToVmax/dx1);
         }
         Vmax = V0;
     }
@@ -360,8 +395,11 @@ void Schrodinger::setV2D(){
         setVtoZero();
         Vmax = 0;
     } else if (potential == "constBarrier"){
-        double V0 = stod(getValue(*situationFile));
-        double VThickness = stod(getValue(*situationFile));
+        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double VThicknessOverLx1 = stod(getValue(*situationFile));
+        
+        double V0 = V0OverStartEnergy * startEnergy;
+        double VThickness = VThicknessOverLx1 * Lx1;
         setVtoZero();
         for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
             for (int x2 = 0; x2 < Nx2; x2++){
@@ -370,11 +408,16 @@ void Schrodinger::setV2D(){
         }
         Vmax = V0;
     } else if (potential == "multiSlit"){
-        double V0 = stod(getValue(*situationFile));
-        double VThickness = stod(getValue(*situationFile));
+        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double VThicknessOverLx1 = stod(getValue(*situationFile));
         int slitNumber = stoi(getValue(*situationFile));
-        double slitWidth = stod(getValue(*situationFile));
-        double slitDistance = stod(getValue(*situationFile));
+        double slitWidthOverLx2 = stod(getValue(*situationFile));
+        double slitDistanceOverLx2 = stod(getValue(*situationFile));
+        
+        double V0 = V0OverStartEnergy / startEnergy;
+        double VThickness = VThicknessOverLx1 * Lx1;
+        double slitWidth = slitWidthOverLx2 * Lx2;
+        double slitDistance = slitDistanceOverLx2 * Lx2;
         
         setVtoZero();
         // Making constant potential barrier
@@ -412,10 +455,15 @@ void Schrodinger::setV2D(){
         Vmax = V0;
 
     } else if (potential == "circle"){
-        double V0 = stod(getValue(*situationFile));
-        int radius = static_cast<int>(round(stod(getValue(*situationFile)) / dx1));
-        int centerX1 = static_cast<int>(round(stod(getValue(*situationFile)) / dx1));
-        int centerX2 = static_cast<int>(round(stod(getValue(*situationFile)) / dx2));
+        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double radiusOverLx1 = stod(getValue(*situationFile));
+        double centerX1OverLx1 = stod(getValue(*situationFile));
+        double centerX2OverLx2 = stod(getValue(*situationFile));
+        
+        double V0 = V0OverStartEnergy * startEnergy;
+        int radius = static_cast<int>(round(radiusOverLx1 * Lx1 / dx1));
+        int centerX1 = static_cast<int>(round(centerX1OverLx1 * Lx1 / dx1));
+        int centerX2 = static_cast<int>(round(centerX2OverLx2 * Lx2 / dx2));
         for (int x2 = 0; x2 < Nx2; x2++){
             for (int x1 = 0; x1 < Nx1; x1++){
                 if (pow(x1-centerX1,2)+pow(x2-centerX2,2)<pow(radius,2)) {
@@ -427,10 +475,15 @@ void Schrodinger::setV2D(){
         }
         Vmax = V0;
     } else if (potential == "ball"){
-        double V0 = stod(getValue(*situationFile));
-        int radius = static_cast<int>(round(stod(getValue(*situationFile)) / dx1));
-        int centerX1 = static_cast<int>(round(stod(getValue(*situationFile)) / dx1));
-        int centerX2 = static_cast<int>(round(stod(getValue(*situationFile)) / dx2));
+        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double radiusOverLx1 = stod(getValue(*situationFile));
+        double centerX1OverLx1 = stod(getValue(*situationFile));
+        double centerX2OverLx2 = stod(getValue(*situationFile));
+        
+        double V0 = V0OverStartEnergy * startEnergy;
+        int radius = static_cast<int>(round(radiusOverLx1 * Lx1 / dx1));
+        int centerX1 = static_cast<int>(round(centerX1OverLx1 * Lx1 / dx1));
+        int centerX2 = static_cast<int>(round(centerX2OverLx2 * Lx2 / dx2));
         for (int x2 = 0; x2 < Nx2; x2++){
             for (int x1 = 0; x1 < Nx1; x1++){
                 if (pow(x1-centerX1,2)+pow(x2-centerX2,2)<pow(radius,2)) {
@@ -709,7 +762,7 @@ void Schrodinger::storeFinalState(long time){
     finalEnergy = findEnergy();
     ofstream usefulSimValues;
     usefulSimValues.open(filename + "_simulationValues.txt");
-    usefulSimValues << startEnergy << endl << finalEnergy << endl << finalProb << endl << Vmax << endl << time << endl << plotSpacingI << endl << plotSpacingX1 << endl << plotSpacingX2 << endl << plotSpacingX3 << endl;
+    usefulSimValues << "The start energy:" << endl << startEnergy << endl  << "The final energy:" << endl << finalEnergy << endl  << "The final probability of finding the particle:" << endl << finalProb << endl  << "The maximum potenital:" << endl << Vmax << endl  << "The simlation used " << time / 60 << " minuttes and " << time % 60 << "seconds." << endl  << "Simulationtime in seconds:" <<endl << time << endl  << "plotSpacingI:" << endl << plotSpacingI << endl  << "plotSpacingX1:" << endl << plotSpacingX1 << endl  << "plotSpacingX2:" << endl << plotSpacingX2 << endl  << "plotSpacingX3:" << endl << plotSpacingX3 << endl << "Seconds used to animate the simulation: " << endl;
     usefulSimValues.close();
 }
 

@@ -6,8 +6,9 @@
 #  Created by Håkon Austlid Taskén on 24.10.15.
 #
 #
-# Takes the name of the textfile spesifing the values used to run the simulation and run schrodingerFD and
-# plotSchrodinger.py with this input. Finally it playes the movie produced with quicktime player.
+# This shell script runs schrodingerFD and plotSchrodinger and plays the movie produced in quicktime player.
+# Require the name of the textfile spesifing the values used to run the simulation as input.
+# Example: $ ./runSimAndAnimate.sh free1D.txt
 
 filename=$1
 ./schrodingerFD << EOF

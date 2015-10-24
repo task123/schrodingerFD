@@ -88,15 +88,26 @@ plotResX3 = int(getValue(situationFile))
 situationFile.close()
 
 simulationValues = open(find(filename + "_simulationValues.txt"), mode = 'r');
+simulationValues.readline()
 startEnergy = float(simulationValues.readline())
+simulationValues.readline()
 finalEnergy = float(simulationValues.readline())
+simulationValues.readline()
 finalProb = float(simulationValues.readline())
+simulationValues.readline()
 Vmax = float(simulationValues.readline())
+simulationValues.readline()
+simulationValues.readline()
 simulationTime = float(simulationValues.readline())
+simulationValues.readline()
 plotSpacingI = int(simulationValues.readline())
+simulationValues.readline()
 plotSpacingX1 = int(simulationValues.readline())
+simulationValues.readline()
 plotSpacingX2 = int(simulationValues.readline())
+simulationValues.readline()
 plotSpacingX3 = int(simulationValues.readline())
+simulationValues.readline()
 animationTimeExists = simulationValues.readline()
 
 # makes sure numOfFrames and plottedResolution is correct
@@ -159,7 +170,7 @@ def animate1D(i):
     psiIPlot.set_data(x1, scaleConstPsi * plotPsiIFile[plotResX1*i:plotResX1*(i+1)])
     return probPlot, psiRPlot, psiIPlot,
 
-
+# initialization function for 2D: plot the background of each frame
 def init2D():
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,plotResX1), np.linspace(0,Lx2,plotResX2))
     z = potentialFile[0:Nx1*Nx2:plotSpacingX1].reshape(Nx2,plotResX1)[0:Nx2:plotSpacingX2,:]
@@ -176,6 +187,7 @@ def init2D():
     potentialPlot4 = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white_black'), zorder = 2, vmin = - colorLimit, vmax = colorLimit)
     return potentialPlot1, potentialPlot2, potentialPlot3, potentialPlot4,
 
+# animation function for 2D.  This is called sequentially
 def animate2D(i):
     z = plotProbabilityFile[plotResX1*plotResX2*i:plotResX1*plotResX2*(i+1)].reshape(plotResX2,plotResX1)
     plt.sca(ax1)
@@ -188,10 +200,11 @@ def animate2D(i):
     probPlot3 = plt.contourf(x1,x2,z, cmap=ccmaps.cmap('vaagen_colorscale'), zorder = 1, vmin = 0, vmax = maxProb*scaleConstAx4)
     return probPlot1, probPlot2, probPlot3, probPlot4
 
-
+# initialization function for 3D: plot the background of each frame
 def init3D():
     return
 
+# animation function for 3D.  This is called sequentially
 def animate3D(i):
     probMat = plotProbabilityFile[plotResX1*plotResX2*plotResX3*i:plotResX1*plotResX2*plotResX3*(i+1)].reshape(plotResX3,plotResX2,plotResX1)
     z11 = np.sum(probMat, axis=0)
@@ -241,13 +254,13 @@ elif numOfDim == 3:
 # http://matplotlib.sourceforge.net/api/animation_api.html
 anim.save('simulationMovies/' + filename + '.mp4', fps=numOfFrames/animationTime, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
-# plt.show()
+#plt.show()
 
 if  len(animationTimeExists) == 0:
     simulationValues = open(find(filename + "_simulationValues.txt"), mode = 'a');
     simulationValues.write(str(time.clock() - startTime))
     simulationValues.close()
 
-print "Seconds used to run animation: ",
+print "Seconds used to animate the simulation: ",
 print time.clock() - startTime
 

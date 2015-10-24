@@ -31,6 +31,10 @@ public:
     // run the simulation with the 'situation' spesified by values in the text file filename
     void run(string filename);
     
+    //contunue previous simulation and asks for the name of the file with the values being simulated, number of intrations and if it should append the output to the previous file
+    // not appending the output to the previous file will result in a new scaling of plot in plotSchrodinger.py
+    void continueSimulation();
+    
     // continue previous simulation
     // appendOldFile = false will result in a new scaling of plot in plotSchrodinger.py
     void continueSimulation(string filename, int numOfIterations, bool appendOldFile);

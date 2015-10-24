@@ -8,9 +8,9 @@
 // extra parameters for probDistrb is given before extra parameters for potential
 // the name of this file must end with .txt
 
-numOfDim:     1     # Number of iterations
+numOfDim:     2     # Number of iterations
 
-potential:  "free"   # Name of potential
+potential:  "ball"   # Name of potential
 
 probDistrb: "sinusoidalGaussian"    # Name of the initial probability distribution
 
@@ -20,29 +20,33 @@ hbar: 1 # Planck's constant divided by two pi
         # allow the simulation to be run with other scalings
         # 1.0545718e-34 is the real value
 
-Ni: 5000  # Number of iterations (time steps = 3 * Ni)
+Ni: 10000  # Number of iterations (time steps = 3 * Ni)
 
 numOfFrames:  100  # Number of time steps saved and the total number of frames
                    # in the movie produced by plotSchrodinger.py
 
-Nx1: 1200  # Number of divisions in x1-direction
-Nx2: 1     # Number of divisions in x2-direction
-Nx3: 1     # Number of divisions in x3-direction
+Nx1: 800  # Number of divisions in x1-direction
+Nx2: 600  # Number of divisions in x2-direction
+Nx3: 1    # Number of divisions in x3-direction
 
-Lx1: 1200     # Length of x1-direction in meters
-Lx2: 1     # Length of x1-direction in meters
+Lx1: 800     # Length of x1-direction in meters
+Lx2: 600     # Length of x1-direction in meters
 Lx3: 1     # Length of x1-direction in meters
 
-plottedResolutionInX1: 600   # Resolution in x1-direction in each plot 
+plottedResolutionInX1: 400   # Resolution in x1-direction in each plot 
 			     # produced by plotSchrodinger.py
-plottedResolutionInX2: 100   # Resolution in x2-direction in each plot 
+plottedResolutionInX2: 400   # Resolution in x2-direction in each plot 
 			     # produced by plotSchrodinger.py
 plottedResolutionInX3: 100   # Resolution in x3-direction in each plot 
 			     # produced by plotSchrodinger.py
 
 // extra parameters for the initial probability distribution
-Lx1 / SDx1: 16 # Length divided by standard deviation in x1-direction
-p: 0.157 # Momentum (k = p / hbar)
+SDx1 / Lx1: 0.0625 # Length divided by standard deviation in x1-direction
+SDx2 / Lx2: 0.0625 # Length divided by standard deviation in x2-direction
+p: 0.15707963267 # Momentum (k = p / hbar)
 
-// extra parameters for the potential 
-4.9179795.581111.84315912.112848
+// extra parameters for the potential
+V0 / startEnergy: 1.0 # the value of the potential relativ to the start energy
+radius / Lx1: 0.2 # radius of the potential relativ to the potential
+centerX1 / Lx1: 0.5 # relativ length in x1-direction to the center of the circle 
+centerX2 / Lx2: 0.6 # relativ length in x2-direction to the center of the circle

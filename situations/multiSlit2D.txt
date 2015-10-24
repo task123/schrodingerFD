@@ -1,0 +1,55 @@
+// text file setting values used by schrodingerFD
+// the values must be given between a colon and a hashtag
+// strings must given with quotation marks ("string")
+// the values must be listed in correct order and all values must be listed
+//      (what 'all values' are depend on the potential and the initial probability
+//       distribution, probDistrb, as the potential and probDistrb may require extra
+//       values (typical momentum for probDistrb))
+// extra parameters for probDistrb is given before extra parameters for potential
+// the name of this file must end with .txt
+
+numOfDim:     2     # Number of iterations
+
+potential:  "multiSlit"   # Name of potential
+
+probDistrb: "sinusoidalGaussian"    # Name of the initial probability distribution
+
+m: 1 # Mass of particle simulated in kg
+
+hbar: 1 # Planck's constant divided by two pi
+        # allow the simulation to be run with other scalings
+        # 1.0545718e-34 is the real value
+
+Ni: 10000  # Number of iterations (time steps = 3 * Ni)
+
+numOfFrames:  100  # Number of time steps saved and the total number of frames
+                   # in the movie produced by plotSchrodinger.py
+
+Nx1: 800  # Number of divisions in x1-direction
+Nx2: 600  # Number of divisions in x2-direction
+Nx3: 1    # Number of divisions in x3-direction
+
+Lx1: 800     # Length of x1-direction in meters
+Lx2: 600     # Length of x1-direction in meters
+Lx3: 1     # Length of x1-direction in meters
+
+plottedResolutionInX1: 600   # Resolution in x1-direction in each plot 
+			     # produced by plotSchrodinger.py
+plottedResolutionInX2: 600   # Resolution in x2-direction in each plot 
+			     # produced by plotSchrodinger.py
+plottedResolutionInX3: 100   # Resolution in x3-direction in each plot 
+			     # produced by plotSchrodinger.py
+
+// extra parameters for the initial probability distribution
+SDx1 / Lx1: 0.06 # Length divided by standard deviation in x1-direction
+SDx2 / Lx2: 0.06 # Length divided by standard deviation in x2-direction
+p: 0.157 # Momentum (k = p / hbar)
+
+// extra parameters for the potential
+V0 / startEnergy: 1.0 # the value of the potential relativ to the start energy
+VThickness / Lx1: 0.1 # the depth of the potential relativ to the length 
+	              # in x1-direction
+slitNumber: 2 # number of slits
+slitWidth / Lx2: 0.05 # width of a slit relativ to the length in x2-direction
+slitDistance / Lx2: 0.05 # distance between the slits relativ to the length 
+			      # in x2-direction

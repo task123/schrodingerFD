@@ -13,6 +13,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     Schrodinger s;
-    s.run();
+    //s.run();
+    s.continueSimulation();
     return 0;
 }
