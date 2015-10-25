@@ -416,7 +416,7 @@ void Schrodinger::setV2D(){
         double slitWidthOverLx2 = stod(getValue(*situationFile));
         double slitDistanceOverLx2 = stod(getValue(*situationFile));
         
-        double V0 = V0OverStartEnergy / startEnergy;
+        double V0 = V0OverStartEnergy * startEnergy;
         double VThickness = VThicknessOverLx1 * Lx1;
         double slitWidth = slitWidthOverLx2 * Lx2;
         double slitDistance = slitDistanceOverLx2 * Lx2;
