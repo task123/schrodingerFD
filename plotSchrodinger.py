@@ -100,6 +100,8 @@ simulationValues.readline()
 simulationValues.readline()
 simulationTime = float(simulationValues.readline())
 simulationValues.readline()
+totalNi = int(simulationValues.readline())
+simulationValues.readline()
 plotSpacingI = int(simulationValues.readline())
 simulationValues.readline()
 plotSpacingX1 = int(simulationValues.readline())
@@ -110,7 +112,8 @@ plotSpacingX3 = int(simulationValues.readline())
 simulationValues.readline()
 animationTimeExists = simulationValues.readline()
 
-# makes sure numOfFrames and plottedResolution is correct
+# makes sure Ni, numOfFrames and plottedResolution is correct
+Ni = totalNi
 numOfFrames = Ni / plotSpacingI
 plotResX1 = Nx1 / plotSpacingX1
 plotResX2 = Nx2 / plotSpacingX2

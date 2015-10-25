@@ -59,7 +59,7 @@ void Schrodinger::run(string filename){
     long time = static_cast<long>(clock() - startTime) / CLOCKS_PER_SEC;
     cout << "The simulation used " << time / 60 << " minuttes and " << time % 60 << " seconds." << endl;
     
-    storeFinalState(time);
+    storeFinalState(time, Ni);
 }
 
 void Schrodinger::continueSimulation(){
@@ -88,6 +88,10 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     loadAndCalculateVariables();
     Ni = numOfIterations;
     
+    checkForDirectory(!appendOldFile);
+    
+    int totalNi = getTotalNi(Ni, appendOldFile);
+    
     V = new double [Nx1 * Nx2 * Nx3];
     psi_r1 = new double [Nx1 * Nx2 * Nx3];
     psi_i1 = new double [Nx1 * Nx2 * Nx3];
@@ -95,8 +99,6 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     psi_i2 = new double [Nx1 * Nx2 * Nx3];
     psi_r3 = new double [Nx1 * Nx2 * Nx3];
     psi_i3 = new double [Nx1 * Nx2 * Nx3];
-    
-    checkForDirectory(!appendOldFile);
 
     loadFinalState();
 
@@ -123,7 +125,7 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     long time = static_cast<long>(clock() - startTime) / CLOCKS_PER_SEC;
     cout << "The simulation used " << time / 60 << " minuttes and " << time % 60 << " seconds." << endl;
     
-    storeFinalState(time);
+    storeFinalState(time, totalNi);
 }
 
 Schrodinger::Schrodinger(){
@@ -750,7 +752,7 @@ void Schrodinger::finiteDifference3D(char* fileOpenType){
     fclose(plotProbabilityFile);
 }
 
-void Schrodinger::storeFinalState(long time){
+void Schrodinger::storeFinalState(long time, int totalNi){
     FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
     fwrite(&psi_r1[0], sizeof(double), Nx1*Nx2*Nx3, finalStateFile);
     fwrite(&psi_i1[0], sizeof(double), Nx1*Nx2*Nx3, finalStateFile);
@@ -760,10 +762,24 @@ void Schrodinger::storeFinalState(long time){
     fclose(potentialFile);
     finalProb = findProbability();
     finalEnergy = findEnergy();
-    ofstream usefulSimValues;
-    usefulSimValues.open(filename + "_simulationValues.txt");
-    usefulSimValues << "The start energy:" << endl << startEnergy << endl  << "The final energy:" << endl << finalEnergy << endl  << "The final probability of finding the particle:" << endl << finalProb << endl  << "The maximum potenital:" << endl << Vmax << endl  << "The simlation used " << time / 60 << " minuttes and " << time % 60 << "seconds." << endl  << "Simulationtime in seconds:" <<endl << time << endl  << "plotSpacingI:" << endl << plotSpacingI << endl  << "plotSpacingX1:" << endl << plotSpacingX1 << endl  << "plotSpacingX2:" << endl << plotSpacingX2 << endl  << "plotSpacingX3:" << endl << plotSpacingX3 << endl << "Seconds used to animate the simulation: " << endl;
-    usefulSimValues.close();
+    ofstream simulationValues;
+    simulationValues.open(filename + "_simulationValues.txt");
+    simulationValues << "The start energy:" << endl << startEnergy << endl  << "The final energy:" << endl << finalEnergy << endl  << "The final probability of finding the particle:" << endl << finalProb << endl  << "The maximum potenital:" << endl << Vmax << endl  << "The simlation used " << time / 60 << " minuttes and " << time % 60 << "seconds." << endl  << "Simulationtime in seconds:" <<endl << time << endl << "Total number of iterations:" << endl << totalNi << endl << "plotSpacingI:" << endl << plotSpacingI << endl  << "plotSpacingX1:" << endl << plotSpacingX1 << endl << "plotSpacingX2:" << endl << plotSpacingX2 << endl  << "plotSpacingX3:" << endl << plotSpacingX3 << endl << "Seconds used to animate the simulation: " << endl;
+    simulationValues.close();
+}
+
+int Schrodinger::getTotalNi(int Ni, bool appendOldFile){
+    if (appendOldFile) {
+        ifstream simulationValues(filename + "_simulationValues.txt");
+        string line;
+        for (int i = 0; i < 13; i++){
+            getline(simulationValues, line);
+        }
+        int previousNi = stoi(line);
+        return Ni + previousNi;
+    } else {
+        return Ni;
+    }
 }
 
 void Schrodinger::loadFinalState(){

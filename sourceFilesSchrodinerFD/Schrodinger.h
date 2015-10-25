@@ -77,7 +77,8 @@ private:
         void finiteDifference2D(char* fileOpenType);
         void finiteDifference3D(char* fileOpenType);
     
-    void storeFinalState(long time);
+    void storeFinalState(long time, int totalNi); // totalNi is the number of iterations and differ from Ni only when one run continueSimulation med appendOldFile = true
+    int getTotalNi(int Ni, bool appendOldFile);
     void loadFinalState();
     
 // VARIABLES FOR SIMULATION

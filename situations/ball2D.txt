@@ -46,7 +46,7 @@ SDx2 / Lx2: 0.0625 # Length divided by standard deviation in x2-direction
 p: 0.15707963267 # Momentum (k = p / hbar)
 
 // extra parameters for the potential
-V0 / startEnergy: 1.0 # the value of the potential relativ to the start energy
+V0 / startEnergy: 0.0000001 # the value of the potential relativ to the start energy
 radius / Lx1: 0.2 # radius of the potential relativ to the potential
-centerX1 / Lx1: 0.5 # relativ length in x1-direction to the center of the circle 
+centerX1 / Lx1: 0.8 # relativ length in x1-direction to the center of the circle 
 centerX2 / Lx2: 0.6 # relativ length in x2-direction to the center of the circle
