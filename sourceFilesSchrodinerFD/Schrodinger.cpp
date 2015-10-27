@@ -9,6 +9,7 @@
 #include "Schrodinger.h"
 #include "float.h"
 #include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
@@ -42,9 +43,9 @@ void Schrodinger::run(string filename){
     startEnergy = findEnergy();
     setV();
     
-    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;
+    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + abs(Vmax)) * 1;
     if (numOfDim ==2){
-        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + Vmax) * 1;
+        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + abs(Vmax)) * 1;
     }
 
     checkForDirectory(true);
