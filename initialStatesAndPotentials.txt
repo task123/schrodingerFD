@@ -10,7 +10,7 @@
   INITIAL STATES:
     sinusiodalGaussian  # Gaussian curve modified with a cosine for the real part and 
 			# sine for the imaginary part.
-	- SDx1 / Lx1   # Standard deviation in the x1-directon relativ to the length of 			# the x1-direction.
+	- SDx1 / Lx1   # Standard deviation in the x1-directon relative to the length of 			# the x1-direction.
 			# Used to define the gaussian curve
 			# 0.06 is a probably a sensible value
 	- p # Momentum of the simulated particle (k = p / hbar)
@@ -21,24 +21,24 @@
 	
     constBarrier # potential of constant value, V0, from the midle of the length in 
 		 # x1-directon and to a given thickness, VThickness
-	- V0 / startEnergy # the value of the potential relativ to the start energy
-	- VThickness / Lx1 # the depth of the potential relativ to the length 
+	- V0 / startEnergy # the value of the potential relative to the start energy
+	- VThickness / Lx1 # the depth of the potential relative to the length
 			    # in x1-direction
     
     triangle # potential the shape of a triangle
-	- V0 / startEnergy # the value of the potential relativ to the start energy
-	- VThickness / Lx1 # relativ length of the ground line of the triangle
+	- V0 / startEnergy # the value of the potential relative to the start energy
+	- VThickness / Lx1 # relative length of the ground line of the triangle
 	- relativDistanceToVmax # distance from the stat of the potential to its maximum
-				# relativ to the length in x1-direction
+				# relative to the length in x1-direction
 			 	# must be a value between 0 and VThicknessOverLx1
 2D:
   INITIAL STATES:
     sinusiodalGaussian  # A gaussian curve in x2-direction time gaussian curve in the 
 			# x1-directon modified with a cosine for the real part and 
 			# sine for the imaginary part in the .
-	- SDx1 / Lx1   # Standard deviation in the x1-directon relativ to the length of 			# the x1-direction.
+	- SDx1 / Lx1   # Standard deviation in the x1-directon relative to the length of 			# the x1-direction.
 			# Used to define the gaussian curve
-	- SDx2 / Lx2   # Standard deviation in the x2-directon relativ to the length of 			# the x2-direction.
+	- SDx2 / Lx2   # Standard deviation in the x2-directon relative to the length of 			# the x2-direction.
 			# Used to define the gaussian curve
 	- p # Momentum of the simulated particle (k = p / hbar)
 	    # 20 * pi * hbar is probably a sensible value
@@ -48,32 +48,32 @@
 
     constBarrier # potential of constant value, V0, from the midle of the length in 
 		 # x1-directon and to a given thickness, VThickness
-	- V0 / startEnergy # the value of the potential relativ to the start energy
-	- VThickness / Lx1 # the depth of the potential relativ to the length 
+	- V0 / startEnergy # the value of the potential relative to the start energy
+	- VThickness / Lx1 # the depth of the potential relative to the length
 			    # in x1-direction
 
    multiSlit  # potential of constant value from the midle of the length in 
 	      # x1-directon and to a given thickness with a given number of slits of
 	      # specified width and separated of a given distance
-	- V0 / startEnergy # the value of the potential relativ to the start energy
-	- VThickness / Lx1 # the depth of the potential relativ to the length 
+	- V0 / startEnergy # the value of the potential relative to the start energy
+	- VThickness / Lx1 # the depth of the potential relative to the length
 			    # in x1-direction
 	- slitNumber # number of slits
-	- slitWidth / Lx2 # width of a slit relativ to the length in x2-direction
-	- slitDistance / Lx2 # distance between the slits relativ to the length 
+	- slitWidth / Lx2 # width of a slit relative to the length in x2-direction
+	- slitDistance / Lx2 # distance between the slits relative to the length
 			      # in x2-direction
 
     circle # potential of constant value within a radius of a spesified point
-	- V0 / startEnergy # the value of the potential relativ to the start energy
-	- radius / Lx1 # radius of the potential relativ to the potential
-	- centerX1 / Lx1 # relativ length in x1-direction to the center of the circle 
-	- centerX2 / Lx2 # relativ length in x2-direction to the center of the circle
+	- V0 / startEnergy # the value of the potential relative to the start energy
+	- radius / Lx1 # radius of the potential relative to the potential
+	- centerX1 / Lx1 # relative length in x1-direction to the center of the circle
+	- centerX2 / Lx2 # relative length in x2-direction to the center of the circle
 
     ball # potential as the top half of a ball
-	- V0 / startEnergy # the value of the potential relativ to the start energy
-	- radius / Lx1 # radius of the potential relativ to the potential
-	- centerX1 / Lx1 # relativ length in x1-direction to the center of the circle 
-	- centerX2 / Lx2 # relativ length in x2-direction to the center of the circle
+	- V0 / startEnergy # the value of the potential relative to the start energy
+	- radius / Lx1 # radius of the potential relative to the potential
+	- centerX1 / Lx1 # relative length in x1-direction to the center of the circle
+	- centerX2 / Lx2 # relative length in x2-direction to the center of the circle
 
 3D:
   INITIAL STATES:

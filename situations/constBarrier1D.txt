@@ -20,7 +20,7 @@ hbar: 1 # Planck's constant divided by two pi
         # allow the simulation to be run with other scalings
         # 1.0545718e-34 is the real value
 
-Ni: 100000  # Number of iterations (time steps = 3 * Ni)
+Ni: 1700  # Number of iterations (time steps = 3 * Ni)
 
 numOfFrames:  100  # Number of time steps saved and the total number of frames
                    # in the movie produced by plotSchrodinger.py
@@ -29,7 +29,7 @@ Nx1: 1200  # Number of divisions in x1-direction
 Nx2: 1     # Number of divisions in x2-direction
 Nx3: 1     # Number of divisions in x3-direction
 
-Lx1: 1200     # Length of x1-direction in meters
+Lx1: 20     # Length of x1-direction in meters
 Lx2: 1     # Length of x1-direction in meters
 Lx3: 1     # Length of x1-direction in meters
 
@@ -41,9 +41,9 @@ plottedResolutionInX3: 100   # Resolution in x3-direction in each plot
 			     # produced by plotSchrodinger.py
 
 // extra parameters for the initial probability distribution
-SDx1 / Lx1: 0.02 # Length divided by standard deviation in x1-direction
-p: 0.157 # Momentum (k = p / hbar)
+SDx1 / Lx1: 0.05 # Length divided by standard deviation in x1-direction
+p: 20 # Momentum (k = p / hbar)
 
 // extra parameters for the potential
-V0 / startEnergy: 2.0 # the value of the potential
-VThickness / Lx1: 0.01 # the depth of the potential
+V0 / startEnergy: 0.650 # the value of the potential
+VThickness / Lx1: 0.04 # the depth of the potential

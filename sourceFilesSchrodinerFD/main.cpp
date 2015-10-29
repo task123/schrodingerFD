@@ -14,6 +14,7 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     Schrodinger s;
     s.run();
+    //s.runAndStoreProbability();
     //s.continueSimulation();
     return 0;
 }
