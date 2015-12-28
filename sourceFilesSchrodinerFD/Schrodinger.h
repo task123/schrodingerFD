@@ -31,6 +31,9 @@ public:
     // run the simulation with the 'situation' spesified by values in the text file filename
     void run(string filename);
     
+    // run the simulation usin run(), then calculate probability of reflection and transmission and store these in file filename_reflection.txt and
+    void runAndStoreProbability();
+    
     //contunue previous simulation and asks for the name of the file with the values being simulated, number of intrations and if it should append the output to the previous file
     // not appending the output to the previous file will result in a new scaling of plot in plotSchrodinger.py
     void continueSimulation();
@@ -38,6 +41,9 @@ public:
     // continue previous simulation
     // appendOldFile = false will result in a new scaling of plot in plotSchrodinger.py
     void continueSimulation(string filename, int numOfIterations, bool appendOldFile);
+    
+    // Calculate reflection and transmission coefficients for last frame, then append these to respevtive files
+    void saveReflectionTransmissionCoefficients();
     
     Schrodinger();
     ~Schrodinger();
@@ -54,6 +60,7 @@ private:
         void makeInitState3D();
             void normalizePsi();
             double findProbability();
+            double findProbabilityInVolume(int startX1, int endX1, int startX2, int endX2, int startX3, int endX3);
     
     // spesifies the potential
     void setV();
@@ -90,7 +97,7 @@ private:
     double* psi_i3; //imagenary part of wave funciton in timesteps 2 + 3t
     double* V;
     
-    string filename;
+    string filename; // This string changes value when checkForDirectory() is called, after that, filename includes subdirectory if this exists
     int numOfDim;
     string potential;
     string probDistrb; // name of initial probability distribution
@@ -120,6 +127,8 @@ private:
     double startEnergy;
     double finalEnergy;
     double finalProb;
+    double V0;
+    double VThickness;
 
     ifstream* situationFile;
 };

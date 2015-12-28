@@ -9,6 +9,7 @@
 #include "Schrodinger.h"
 #include "float.h"
 #include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
@@ -42,9 +43,9 @@ void Schrodinger::run(string filename){
     startEnergy = findEnergy();
     setV();
     
-    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;
+    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + abs(Vmax)) * 1;
     if (numOfDim ==2){
-        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + Vmax) * 1;
+        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + abs(Vmax)) * 1;
     }
 
     checkForDirectory(true);
@@ -61,6 +62,13 @@ void Schrodinger::run(string filename){
     
     storeFinalState(time, Ni);
 }
+
+void Schrodinger::runAndStoreProbability(){
+        run();
+        saveReflectionTransmissionCoefficients();
+}
+
+
 
 void Schrodinger::continueSimulation(){
     cout << "continueSchrodingerFD is running" << endl;
@@ -126,6 +134,26 @@ void Schrodinger::continueSimulation(string filename, int numOfIterations, bool 
     cout << "The simulation used " << time / 60 << " minuttes and " << time % 60 << " seconds." << endl;
     
     storeFinalState(time, totalNi);
+}
+
+void Schrodinger::saveReflectionTransmissionCoefficients(){
+    ofstream reflectionFile;
+    reflectionFile.open(filename + "_reflection", std::ofstream::out | std::ofstream::app);
+    if (!reflectionFile.is_open()){cout << "Error opening file " << endl;}
+    
+    ofstream transmissionFile;
+    transmissionFile.open(filename + "_transmission", std::ofstream::out | std::ofstream::app);
+    if (!transmissionFile.is_open()){cout << "Error opening file " << endl;}
+    
+    double probOfReflection = findProbabilityInVolume(0,Nx1/2,0,Nx2,0,Nx3);
+    double probOfTransmission = findProbabilityInVolume(Nx1/2+VThickness/dx1,Nx1,0,Nx2,0,Nx3);
+    
+    reflectionFile << Vmax/startEnergy << "\t" << VThickness/Lx1 << "\t" << probOfReflection << endl;
+    transmissionFile << Vmax/startEnergy << "\t" << VThickness/Lx1 << "\t" << probOfTransmission << endl;
+    
+    reflectionFile.close();
+    transmissionFile.close();
+
 }
 
 Schrodinger::Schrodinger(){
@@ -335,11 +363,13 @@ void Schrodinger::normalizePsi(){
     }
 }
 
-double Schrodinger::findProbability(){
+double Schrodinger::findProbability(){return findProbabilityInVolume(0, Nx1, 0, Nx2, 0, Nx3);}
+
+double Schrodinger::findProbabilityInVolume(int startX1, int endX1, int startX2, int endX2, int startX3, int endX3){
     double probability = 0.0;
-    for (int x3 = 0; x3 < Nx3; x3++){
-        for (int x2 = 0; x2 < Nx2; x2++){
-            for (int x1 = 0; x1 < Nx1; x1++){
+    for (int x3 = startX3; x3 < endX3; x3++){
+        for (int x2 = startX2; x2 < endX2; x2++){
+            for (int x1 = startX1; x1 < endX1; x1++){
                 probability += (psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] + psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_i1[Nx1*Nx2*x3+Nx1*x2+x1]) * dx1 * dx2 * dx3;
             }
         }
@@ -360,13 +390,13 @@ void Schrodinger::setV(){
 void Schrodinger::setV1D(){
     if (potential == "free"){
         setVtoZero();
-        Vmax = 0;
+        //Vmax = 0;
     } else if (potential == "constBarrier"){
-        double V0OverStartEnergy = stod(getValue(*situationFile));
+        double V0OverStartEnergy = stod(getValue(*situationFile));///////////////////////////////////////////
         double VThicknessOverLx1 = stod(getValue(*situationFile));
         
-        double V0 = V0OverStartEnergy * startEnergy;
-        double VThickness = VThicknessOverLx1 * Lx1;
+        V0 = V0OverStartEnergy * startEnergy;
+        VThickness = VThicknessOverLx1 * Lx1;
         setVtoZero();
         for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
             V[x1] = V0;
@@ -434,7 +464,7 @@ void Schrodinger::setV2D(){
         // Placing first slit, if odd number of slits.
         if (slitNumber % 2 == 0){
             nextSlitX2 = slitDistance/(dx2*2);
-        }else if (slitsPlaced % 2 == 1){
+        }else if (slitNumber % 2 == 1){
             for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
                 for (int x2 = Nx2/2 - slitWidth/(dx2*2); x2 < Nx2/2 + slitWidth/(dx2*2); x2++){
                     V[Nx1*x2+x1] = 0;
@@ -444,9 +474,9 @@ void Schrodinger::setV2D(){
             nextSlitX2 = slitWidth/dx2/2 + slitDistance/dx2;
         }
         // Placing remaining slits, two at a time
-        while (slitsPlaced < slitNumber && (nextSlitX2 + slitWidth < Lx2/2)){
+        while (slitsPlaced < slitNumber && (nextSlitX2*dx2 + slitWidth < Lx2/2)){
             for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
-                for (int x2 = nextSlitX2/dx2; x2 < nextSlitX2/dx2 + slitWidth/dx2; x2++){
+                for (int x2 = nextSlitX2; x2 < nextSlitX2 + slitWidth/dx2; x2++){
                     V[Nx1*(Nx2/2 + x2) +x1] = 0;
                     V[Nx1*(Nx2/2 - x2) +x1] = 0;
                 }

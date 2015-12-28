@@ -65,10 +65,12 @@ def getValue(file):
 startTime = time.clock()
 
 # load variables used in simulation
+
 try:
-    situationFile = open(find(filename + ".txt"), mode = 'r')
+#situationFile = open(find(filename + ".txt"), mode = 'r')
+    situationFile = open("situations/" + filename + ".txt", mode = 'r')
 except IOError:
-     sys.exit("Could not open file.")
+    sys.exit("Could not open file.")
 numOfDim = int(getValue(situationFile))
 potential = getValue(situationFile)
 probDistrb = getValue(situationFile)
@@ -257,6 +259,7 @@ elif numOfDim == 3:
 # http://matplotlib.sourceforge.net/api/animation_api.html
 anim.save('simulationMovies/' + filename + '.mp4', fps=numOfFrames/animationTime, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
+# If ffmpeg is not installed, you may still make the animation by commenting out the above call to anim.save, and instead use plt.show()
 #plt.show()
 
 if  len(animationTimeExists) == 0:
