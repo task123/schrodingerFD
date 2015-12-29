@@ -28,11 +28,8 @@ public:
     // run the simulation and asks for the name of a text file where the 'situation' simulated are spesified in a spesial form
     void run();
     
-    // run the simulation with the 'situation' spesified by values in the text file filename
+    // run the simulation with the 'situation' spesified by values in the text file 'filename'
     void run(string filename);
-    
-    // run the simulation usin run(), then calculate probability of reflection and transmission and store these in file filename_reflection.txt and
-    void runAndStoreProbability();
     
     //contunue previous simulation and asks for the name of the file with the values being simulated, number of intrations and if it should append the output to the previous file
     // not appending the output to the previous file will result in a new scaling of plot in plotSchrodinger.py
@@ -42,8 +39,12 @@ public:
     // appendOldFile = false will result in a new scaling of plot in plotSchrodinger.py
     void continueSimulation(string filename, int numOfIterations, bool appendOldFile);
     
-    // Calculate reflection and transmission coefficients for last frame, then append these to respevtive files
-    void saveReflectionTransmissionCoefficients();
+    // finds the probability of finding the particle in the in the specified volum for the end state of the simulation last run with the values in the text file 'filename'
+    double findProbabilityInVolume();
+    
+    // finds the probability of finding the particle in the in the specified volum for the end state of the simulation last run with the values in the text file 'filename'
+    // startXn and endXn are hole number between 0 and Nxn
+    double findProbabilityInVolume(string filename, double startX1, double endX1, double startX2, double endX2, double startX3, double endX3);
     
     Schrodinger();
     ~Schrodinger();
@@ -97,7 +98,7 @@ private:
     double* psi_i3; //imagenary part of wave funciton in timesteps 2 + 3t
     double* V;
     
-    string filename; // This string changes value when checkForDirectory() is called, after that, filename includes subdirectory if this exists
+    string filename;
     int numOfDim;
     string potential;
     string probDistrb; // name of initial probability distribution
@@ -127,8 +128,6 @@ private:
     double startEnergy;
     double finalEnergy;
     double finalProb;
-    double V0;
-    double VThickness;
 
     ifstream* situationFile;
 };
